@@ -21,7 +21,8 @@ import qualified Data.ByteString.Lazy   as LB
 import           Data.Hashable
 import qualified Data.HashMap.Strict    as H
 import           Data.Serialize
-import           Prelude                hiding (lookup)
+import           Prelude                hiding (lookup, map)
+import qualified Prelude                as P
 
 newtype TinyMap k v = TinyMap (H.HashMap k LB.ByteString)
 
@@ -42,6 +43,9 @@ insert key val (TinyMap map) =
         compressed = compress serialized
     in TinyMap $! H.insert key compressed map
 
+singleton :: (Serialize v, Hashable k, Eq k) => k -> v -> TinyMap k v
+singleton key val = insert key val empty
+
 size :: (Serialize v, Hashable k, Eq k) => TinyMap k v -> Int
 size (TinyMap hmap) = H.size hmap
 
@@ -49,7 +53,7 @@ delete :: (Serialize v, Hashable k, Eq k) => k -> TinyMap k v -> TinyMap k v
 delete key (TinyMap hmap) = TinyMap $! H.delete key hmap
 
 map :: (Serialize v, Serialize v1, Hashable k, Eq k) => (v -> v1) -> TinyMap k v -> TinyMap k v1
-map f (TinyMap hmap) = TinyMap . H.fromList . Prelude.map go . H.toList $ hmap
+map f (TinyMap hmap) = TinyMap . H.fromList . P.map go . H.toList $ hmap
     where go (key, compressed) =
               case decodeLazy (decompress compressed) of
                 Left msg -> error msg
@@ -66,9 +70,9 @@ foldl' f acc (TinyMap hmap) = go acc (H.elems hmap)
           case decodeLazy (decompress compressed) of
             Left msg -> error msg
             Right !decoded -> go (let !res = f acc decoded in res) xs
-
+v
 toList :: (Serialize v, Hashable k) => TinyMap k v -> [(k,v)]
-toList (TinyMap hmap) = Prelude.map (second f) . H.toList $ hmap
+toList (TinyMap hmap) = P.map (second f) . H.toList $ hmap
   where f compressed =
             case decodeLazy (decompress compressed) of
               Left msg -> error msg
