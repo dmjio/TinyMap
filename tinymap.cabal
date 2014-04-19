@@ -1,7 +1,7 @@
 name:                tinymap
 version:             0.1.0.0
-synopsis:            A fast space-efficient data structure
-description:         A map w/ good asymptotics 
+synopsis:            tinymap is a wrapper around a strict hashmap that serializes and compresses values all while maintaing Ord instances on keys for fast lookup and insertion
+description:         A purely functional, space-efficient, strict hash map with good asymptotics
 license:             MIT
 license-file:        LICENSE
 author:              David Johnson
