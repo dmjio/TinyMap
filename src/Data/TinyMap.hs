@@ -1,7 +1,6 @@
 {-# LANGUAGE BangPatterns #-}
 
-module Data.TinyMap ( -- * Type
-                      TinyMap(..)
+module Data.TinyMap ( TinyMap(..)
                     , lookup
                     , insert
                     , size
@@ -15,12 +14,11 @@ module Data.TinyMap ( -- * Type
 
 import           Codec.Compression.Zlib (compress, decompress)
 import           Control.Arrow          (second)
-import           Control.Monad
 import qualified Data.ByteString        as SB
 import qualified Data.ByteString.Lazy   as LB
-import           Data.Hashable
+import           Data.Hashable          (Hashable)
 import qualified Data.HashMap.Strict    as H
-import           Data.Serialize
+import           Data.Serialize         (Serialize, decodeLazy, encodeLazy)
 import           Prelude                hiding (lookup, map)
 import qualified Prelude                as P
 
@@ -70,7 +68,7 @@ foldl' f acc (TinyMap hmap) = go acc (H.elems hmap)
           case decodeLazy (decompress compressed) of
             Left msg -> error msg
             Right !decoded -> go (let !res = f acc decoded in res) xs
-v
+
 toList :: (Serialize v, Hashable k) => TinyMap k v -> [(k,v)]
 toList (TinyMap hmap) = P.map (second f) . H.toList $ hmap
   where f compressed =
