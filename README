@@ -1,5 +1,0 @@
-#TinyMap
-
-Time and space efficient strict hashmap. 
-All values of TinyMap are serialized and gzip compressed.
-TinyMap uses a phantom type to ensure type-safety
