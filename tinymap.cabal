@@ -1,0 +1,23 @@
+name:                tinymap
+version:             0.1.0.0
+synopsis:            A fast space-efficient data structure
+description:         A map w/ good asymptotics 
+license:             MIT
+license-file:        LICENSE
+author:              David Johnson
+maintainer:          djohnson.m@gmail.com
+category:            Data
+build-type:          Simple
+cabal-version:       >=1.10
+library
+  exposed-modules:     Data.TinyMap
+  build-depends:       base >=4.7 && <4.8
+                     , unordered-containers
+                     , binary
+                     , zlib
+                     , cereal
+                     , hashable
+                     , bytestring
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+  
