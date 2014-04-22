@@ -16,8 +16,10 @@ import           Codec.Compression.Zlib (compress, decompress)
 import           Control.Arrow          (second)
 import qualified Data.ByteString        as SB
 import qualified Data.ByteString.Lazy   as LB
+import qualified Data.Foldable          as F
 import           Data.Hashable          (Hashable)
 import qualified Data.HashMap.Strict    as H
+import           Data.Monoid            (Monoid(..))
 import           Data.Serialize         (Serialize, decodeLazy, encodeLazy)
 import           Prelude                hiding (lookup, map)
 import qualified Prelude                as P
@@ -90,3 +92,8 @@ fromList xs = go xs empty
   where go [] tmap = tmap
         go ((key,val):xs) tmap = go xs (insert key val tmap)
 {-# INLINE fromList #-}
+
+instance (Eq k, Hashable k, Serialize v) => Monoid (TinyMap k v) where
+  mempty = empty
+  tm1 `mappend` tm2 = F.foldl' step tm1 (toList tm2)
+    where step tm (k, v) = insert k v tm
